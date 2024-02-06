@@ -1,16 +1,82 @@
-# This is a sample Python script.
+# bot.py
+import os
+import discord
+import random
+from dotenv import load_dotenv
+from discord.ext import commands
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+load_dotenv()
+TOKEN = os.getenv('DISCORD_TOKEN')
+GUILD = os.getenv("DISCORD_GUILD")
+
+intents = discord.Intents.all()
+intents.message_content = True
+intents.messages = True
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+bot = commands.Bot(command_prefix="!", intents=intents)
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+@bot.event
+async def on_ready():
+    print(f'{bot.user.name} has connected to Discord!')
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+
+@bot.command(name="hi", help="Wita się z użytkownikiem.")
+async def hi_command(ctx):
+    await ctx.send("No cześć!")
+
+
+@bot.command(name='roll_dice', help='Simulates rolling dice.')
+async def roll(ctx, number_of_dice: int, number_of_sides: int):
+    dice = [
+        str(random.choice(range(1, number_of_sides + 1)))
+        for _ in range(number_of_dice)
+    ]
+    await ctx.send(', '.join(dice))
+
+
+@bot.command(name="create_channel")
+@commands.has_role("admin")
+async def create_channel_command(ctx: discord.ext.commands.Context, channel_name="New_channel"):
+    guild = ctx.guild
+    existing_channel = discord.utils.get(guild.channels, name=channel_name)
+    if not existing_channel:
+        print(f'Creating a new channel: {channel_name}')
+        await guild.create_text_channel(channel_name)
+
+
+
+bot.run(TOKEN)
+
+# client = discord.Client(intents=intents)
+# @client.event
+# async def on_ready():
+#     print(f'{client.user.name} has connected to Discord!')
+#     guild = client.guilds
+#     print(guild)
+#
+#
+# @client.event
+# async def on_message(message: discord.Message):
+#     if message.author == client.user:
+#         return
+#     print(message.content)
+#
+#     if message.content == "Cześć":
+#         await message.channel.send("Siema!")
+#     elif message.content == 'raise-exception':
+#         raise discord.DiscordException
+#
+#
+# @client.event
+# async def on_error(event, *args, **kwargs):
+#     with open('err.log', 'a') as f:
+#         if event == 'on_message':
+#             f.write(f'Unhandled message: {args[0]}\n')
+#         else:
+#             raise
+
+
+
+# client.run(TOKEN)
