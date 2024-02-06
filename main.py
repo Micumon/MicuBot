@@ -22,8 +22,9 @@ async def on_ready():
 
 
 @bot.command(name="hi", help="Wita się z użytkownikiem.")
-async def hi_command(ctx):
-    await ctx.send("No cześć!")
+async def hi_command(ctx: discord.ext.commands.Context):
+    await ctx.send(file=discord.File("Assets/k8.jpg"))
+
 
 
 @bot.command(name='roll_dice', help='Simulates rolling dice.')
